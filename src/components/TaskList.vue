@@ -15,7 +15,7 @@
       />
     </div>
 
-    <ul>
+    <ul ref="taskList">
       <li v-for="task in getters.tasks()" :key="task.uuid">
         <task-item :task="task" />
       </li>
@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import Sortable from "sortablejs";
 
 import { state, mutations, getters, init } from "@/store/tasks";
 
@@ -36,9 +37,25 @@ export default {
   },
 
   async setup() {
-    await init();
-
     const input = ref(null);
+    const taskList = ref(null);
+
+    let sortable = null;
+
+    onMounted(() => {
+      sortable = new Sortable(taskList.value, {
+        sort: true,
+        animation: 150,
+        easing: "cubic-bezier(1, 0, 0, 1)",
+      });
+    });
+
+    onBeforeUnmount(() => {
+      sortable.destroy();
+      sortable = null;
+    });
+
+    await init();
 
     const addTask = (task) => {
       mutations.addTask(task);
@@ -51,6 +68,7 @@ export default {
       getters,
       addTask,
       input,
+      taskList,
     };
   },
 };

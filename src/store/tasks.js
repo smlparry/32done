@@ -20,7 +20,7 @@ export const state = reactive({
 });
 
 export const getters = {
-  tasks: () => state.tasks[state.currentDate],
+  tasks: () => state.tasks[state.currentDate] || [],
 };
 
 export const mutations = {
@@ -67,7 +67,7 @@ export const mutations = {
 export const init = async () =>
   localforage.getItem(generateKey(state.currentDate)).then((tasks) => {
     if (tasks) {
-      state.tasks = tasks;
+      state.tasks[state.currentDate] = tasks;
     }
   });
 

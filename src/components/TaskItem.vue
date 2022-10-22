@@ -1,5 +1,7 @@
 <template>
-  <div class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3">
+  <div
+    class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3 bg-white"
+  >
     <button @click="completeTask" class="mr-2 mt-1">
       {{ task.complete ? "✅" : "⬜" }}
     </button>
@@ -73,6 +75,15 @@ export default {
         props.task.content && props.task.content.length
           ? props.task.content
           : defaultTaskContent(props.task),
+
+      // Disable drop: https://github.com/ueberdosis/tiptap/issues/706#issuecomment-1018523772
+      editorProps: {
+        handleDOMEvents: {
+          drop: (_, e) => {
+            e.preventDefault();
+          },
+        },
+      },
 
       extensions: [
         CustomDocument,
