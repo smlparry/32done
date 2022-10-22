@@ -1,5 +1,11 @@
 <template>
-  <task-list />
+  <Suspense>
+    <!-- component with nested async dependencies -->
+    <task-list />
+
+    <!-- loading state via #fallback slot -->
+    <template #fallback> Loading... </template>
+  </Suspense>
 </template>
 
 <script>

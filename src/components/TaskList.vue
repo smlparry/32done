@@ -26,7 +26,7 @@
 <script>
 import { ref } from "vue";
 
-import { state, mutations } from "@/store/tasks";
+import { state, mutations, init } from "@/store/tasks";
 
 import TaskItem from "@/components/TaskItem";
 
@@ -35,7 +35,9 @@ export default {
     TaskItem,
   },
 
-  setup() {
+  async setup() {
+    await init();
+
     const input = ref(null);
 
     const addTask = (task) => {
