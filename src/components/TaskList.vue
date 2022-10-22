@@ -47,6 +47,10 @@ export default {
         sort: true,
         animation: 150,
         easing: "cubic-bezier(1, 0, 0, 1)",
+
+        onUpdate: ({ oldIndex, newIndex }) => {
+          mutations.reorderTasks(oldIndex, newIndex);
+        },
       });
     });
 

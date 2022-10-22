@@ -1,14 +1,14 @@
 <template>
   <div
-    class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3 bg-white"
+    class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3 bg-white cursor-grab"
   >
     <button @click="completeTask" class="mr-2 mt-1">
       {{ task.complete ? "✅" : "⬜" }}
     </button>
 
-    <editor-content class="grow" :editor="editor" />
+    <editor-content class="cursor-auto" :editor="editor" />
 
-    <div class="flex mt-1">
+    <div class="flex mt-1 grow justify-end">
       <button @click="removeTask">✖️</button>
     </div>
   </div>

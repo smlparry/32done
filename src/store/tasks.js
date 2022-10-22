@@ -2,6 +2,8 @@ import { reactive, watch } from "vue";
 import localforage from "localforage";
 import dayjs from "dayjs";
 
+import reorderArray from "@/lib/reorder-array";
+
 const DATE_FORMAT = "YYYY-MM-DD";
 const generateKey = (date) => `32d|tasks|${date}`;
 
@@ -51,6 +53,14 @@ export const mutations = {
       .filter((t) => t.uuid !== task.uuid);
   },
 
+  reorderTasks: (oldIndex, newIndex) => {
+    state.tasks[state.currentDate] = reorderArray(
+      getters.tasks(),
+      oldIndex,
+      newIndex
+    );
+  },
+
   goToPrevDate: () => {
     state.currentDate = dayjs(state.currentDate)
       .subtract(1, "day")
@@ -72,6 +82,7 @@ export const init = async () =>
   });
 
 watch(state, (state) => {
+  console.log("[Store] Persisting Updated State", getters.tasks());
   localforage.setItem(
     generateKey(state.currentDate),
     getters.tasks().map((t) => Object.assign({}, t))
