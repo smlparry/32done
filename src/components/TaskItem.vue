@@ -15,6 +15,8 @@
 <script>
 import { mutations } from "@/store/tasks";
 
+import debounce from "@/lib/debounce";
+
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 
 import Text from "@tiptap/extension-text";
@@ -30,6 +32,8 @@ const CustomDocument = Document.extend({
   content: "heading block*",
 });
 
+const defaultTaskContent = (task) => `<h2>${task.title}</h2>`;
+
 export default {
   components: {
     EditorContent,
@@ -40,10 +44,36 @@ export default {
   },
 
   setup(props) {
+    const handleEditorUpdate = () => {
+      const html = editor.value.getHTML();
+
+      const title = html.substring(
+        html.indexOf("<h2>") + 4,
+        html.lastIndexOf("</h2>")
+      );
+
+      mutations.updateTask({
+        ...props.task,
+        title,
+        content: html,
+      });
+    };
+
+    const completeTask = () => {
+      mutations.updateTask({
+        ...props.task,
+        complete: !props.task.complete,
+      });
+    };
+
+    const removeTask = () => mutations.removeTask(props.task);
+
     const editor = useEditor({
-      content: `
-        <h2>${props.task.title}</h2>
-      `,
+      content:
+        props.task.content && props.task.content.length
+          ? props.task.content
+          : defaultTaskContent(props.task),
+
       extensions: [
         CustomDocument,
         Text,
@@ -68,16 +98,11 @@ export default {
           },
         }),
       ],
+
+      onUpdate: () => {
+        debounce(handleEditorUpdate, 500);
+      },
     });
-
-    const completeTask = () => {
-      mutations.updateTask({
-        ...props.task,
-        complete: !props.task.complete,
-      });
-    };
-
-    const removeTask = () => mutations.removeTask(props.task);
 
     return {
       editor,

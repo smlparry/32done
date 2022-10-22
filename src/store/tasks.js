@@ -11,6 +11,7 @@ export const state = reactive({
       title: "Learn Vue 3",
       completed: false,
       uuid: "1",
+      content: "<h2>Learn Vue 3</h2>",
     },
   ],
 });
