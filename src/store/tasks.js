@@ -7,6 +7,16 @@ import reorderArray from "@/lib/reorder-array";
 const DATE_FORMAT = "YYYY-MM-DD";
 const generateKey = (date) => `32d|tasks|${date}`;
 
+const nextDay = () =>
+  dayjs(state.currentDate).add(1, "day").format(DATE_FORMAT);
+
+const persistDate = (date) => {
+  localforage.setItem(
+    generateKey(date),
+    (state.tasks[date] || []).map((t) => Object.assign({}, t))
+  );
+};
+
 export const state = reactive({
   tasks: {
     [dayjs().format(DATE_FORMAT)]: [],
@@ -65,9 +75,14 @@ export const mutations = {
   },
 
   goToNextDate: () => {
-    state.currentDate = dayjs(state.currentDate)
-      .add(1, "day")
-      .format(DATE_FORMAT);
+    state.currentDate = nextDay();
+  },
+
+  moveToNextDay: (task) => {
+    state.tasks[nextDay()] = [...(state.tasks[nextDay()] || []), task];
+    mutations.removeTask(task);
+
+    persistDate(nextDay());
   },
 };
 
@@ -93,10 +108,7 @@ watch(state.tasks, () => {
     state.currentDate,
     getters.tasks()
   );
-  localforage.setItem(
-    generateKey(state.currentDate),
-    getters.tasks().map((t) => Object.assign({}, t))
-  );
+  persistDate(state.currentDate);
 });
 
 window.getState = () => state;

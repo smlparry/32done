@@ -9,7 +9,10 @@
     <editor-content class="cursor-auto" :editor="editor" />
 
     <div class="flex mt-1 grow justify-end">
-      <button @click="removeTask">✖️</button>
+      <button class="mr-2" @click="() => mutations.moveToNextDay(task)">
+        ➡️️
+      </button>
+      <button @click="() => mutations.removeTask(task)">✖️</button>
     </div>
   </div>
 </template>
@@ -117,6 +120,7 @@ export default {
 
     return {
       editor,
+      mutations,
       completeTask,
       removeTask,
     };
