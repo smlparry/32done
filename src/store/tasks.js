@@ -9,14 +9,7 @@ const generateKey = (date) => `32d|tasks|${date}`;
 
 export const state = reactive({
   tasks: {
-    [dayjs().format(DATE_FORMAT)]: [
-      {
-        title: "Learn Vue 3",
-        completed: false,
-        uuid: "1",
-        content: "<h2>Learn Vue 3</h2>",
-      },
-    ],
+    [dayjs().format(DATE_FORMAT)]: [],
   },
   currentDate: dayjs().format(DATE_FORMAT),
 });
@@ -26,6 +19,10 @@ export const getters = {
 };
 
 export const mutations = {
+  setTasks: (tasks) => {
+    state.tasks[state.currentDate] = tasks;
+  },
+
   addTask: (task) => {
     if (!state.tasks[state.currentDate]) {
       state.tasks[state.currentDate] = [];
@@ -74,15 +71,28 @@ export const mutations = {
   },
 };
 
-export const init = async () =>
-  localforage.getItem(generateKey(state.currentDate)).then((tasks) => {
-    if (tasks) {
-      state.tasks[state.currentDate] = tasks;
-    }
-  });
+const loadTasks = async () => {
+  console.log("[Store] Loading Tasks");
+  if (getters.tasks().length) {
+    mutations.setTasks(getters.tasks());
+    return;
+  } else {
+    return localforage.getItem(generateKey(state.currentDate)).then((tasks) => {
+      if (tasks) mutations.setTasks(tasks);
+    });
+  }
+};
 
-watch(state, (state) => {
-  console.log("[Store] Persisting Updated State", getters.tasks());
+export const init = loadTasks;
+
+watch(() => state.currentDate, loadTasks);
+
+watch(state.tasks, () => {
+  console.log(
+    "[Store] Persisting Updated State",
+    state.currentDate,
+    getters.tasks()
+  );
   localforage.setItem(
     generateKey(state.currentDate),
     getters.tasks().map((t) => Object.assign({}, t))
