@@ -1,26 +1,40 @@
 <template>
-  <day-list />
+  <task-list />
 </template>
 
 <script>
-import DayList from "@/components/DayList";
+import TaskList from "@/components/TaskList";
 
 export default {
   name: "App",
 
   components: {
-    DayList,
+    TaskList,
   },
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-3xl;
+    @apply font-bold;
+  }
+  h2 {
+    @apply text-2xl;
+    @apply font-bold;
+  }
+  h3 {
+    @apply text-xl;
+    @apply font-bold;
+  }
+}
+
+.container {
+  max-width: 560px;
 }
 </style>
