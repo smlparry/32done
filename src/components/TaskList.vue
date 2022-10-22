@@ -1,9 +1,9 @@
 <template>
   <div class="container mx-auto">
     <div class="flex w-full justify-between py-6">
-      <button>Prev</button>
+      <button @click="mutations.goToPrevDate">Prev</button>
       <h3 class="text-2xl">Today</h3>
-      <button>Next</button>
+      <button @click="mutations.goToNextDate">Next</button>
     </div>
     <div class="pb-8 pt-3">
       <input
@@ -16,7 +16,7 @@
     </div>
 
     <ul>
-      <li v-for="task in state.tasks" :key="task.uuid">
+      <li v-for="task in getters.tasks()" :key="task.uuid">
         <task-item :task="task" />
       </li>
     </ul>
@@ -26,7 +26,7 @@
 <script>
 import { ref } from "vue";
 
-import { state, mutations, init } from "@/store/tasks";
+import { state, mutations, getters, init } from "@/store/tasks";
 
 import TaskItem from "@/components/TaskItem";
 
@@ -47,6 +47,8 @@ export default {
 
     return {
       state,
+      mutations,
+      getters,
       addTask,
       input,
     };

@@ -1,38 +1,71 @@
-import localforage from "localforage";
 import { reactive, watch } from "vue";
+import localforage from "localforage";
+import dayjs from "dayjs";
 
-// import localforage from "localforage";
-
-const TASKS_KEY = "32done|tasks";
+const DATE_FORMAT = "YYYY-MM-DD";
+const generateKey = (date) => `32d|tasks|${date}`;
 
 export const state = reactive({
-  tasks: [
-    {
-      title: "Learn Vue 3",
-      completed: false,
-      uuid: "1",
-      content: "<h2>Learn Vue 3</h2>",
-    },
-  ],
+  tasks: {
+    [dayjs().format(DATE_FORMAT)]: [
+      {
+        title: "Learn Vue 3",
+        completed: false,
+        uuid: "1",
+        content: "<h2>Learn Vue 3</h2>",
+      },
+    ],
+  },
+  currentDate: dayjs().format(DATE_FORMAT),
 });
 
+export const getters = {
+  tasks: () => state.tasks[state.currentDate],
+};
+
 export const mutations = {
-  addTask: (task) =>
-    state.tasks.push({
-      title: task,
-      complete: false,
-      uuid: String(Math.random()).replace("0.", ""),
-    }),
+  addTask: (task) => {
+    if (!state.tasks[state.currentDate]) {
+      state.tasks[state.currentDate] = [];
+    }
 
-  updateTask: (task) =>
-    (state.tasks = state.tasks.map((t) => (t.uuid === task.uuid ? task : t))),
+    state.tasks[state.currentDate] = [
+      ...getters.tasks(),
+      {
+        title: task,
+        complete: false,
+        uuid: String(Math.random()).replace("0.", ""),
+      },
+    ];
+  },
 
-  removeTask: (task) =>
-    (state.tasks = state.tasks.filter((t) => t.uuid !== task.uuid)),
+  updateTask: (task) => {
+    state.tasks[state.currentDate] = getters
+      .tasks()
+      .map((t) => (t.uuid === task.uuid ? task : t));
+  },
+
+  removeTask: (task) => {
+    state.tasks[state.currentDate] = getters
+      .tasks()
+      .filter((t) => t.uuid !== task.uuid);
+  },
+
+  goToPrevDate: () => {
+    state.currentDate = dayjs(state.currentDate)
+      .subtract(1, "day")
+      .format(DATE_FORMAT);
+  },
+
+  goToNextDate: () => {
+    state.currentDate = dayjs(state.currentDate)
+      .add(1, "day")
+      .format(DATE_FORMAT);
+  },
 };
 
 export const init = async () =>
-  localforage.getItem(TASKS_KEY).then((tasks) => {
+  localforage.getItem(generateKey(state.currentDate)).then((tasks) => {
     if (tasks) {
       state.tasks = tasks;
     }
@@ -40,7 +73,9 @@ export const init = async () =>
 
 watch(state, (state) => {
   localforage.setItem(
-    TASKS_KEY,
-    state.tasks.map((t) => Object.assign({}, t))
+    generateKey(state.currentDate),
+    getters.tasks().map((t) => Object.assign({}, t))
   );
 });
+
+window.getState = () => state;
