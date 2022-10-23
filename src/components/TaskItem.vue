@@ -2,8 +2,14 @@
   <div
     class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3 bg-white cursor-grab"
   >
-    <button @click="completeTask" class="mr-2 mt-1">
-      {{ task.complete ? "✅" : "⬜" }}
+    <button @click="() => mutations.toggleComplete(task)" class="mr-2 mt-1">
+      {{
+        task.status === STATUS.COMPLETED
+          ? "✅"
+          : task.status === STATUS.MOVED_FORWARD
+          ? "➡️️"
+          : "⬜"
+      }}
     </button>
 
     <editor-content class="cursor-auto" :editor="editor" />
@@ -18,7 +24,7 @@
 </template>
 
 <script>
-import { mutations } from "@/store/tasks";
+import { STATUS, mutations } from "@/store/tasks";
 
 import debounce from "@/lib/debounce";
 
@@ -123,6 +129,7 @@ export default {
       mutations,
       completeTask,
       removeTask,
+      STATUS,
     };
   },
 };

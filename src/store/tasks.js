@@ -4,6 +4,12 @@ import dayjs from "dayjs";
 
 import reorderArray from "@/lib/reorder-array";
 
+export const STATUS = {
+  UNCOMPLETED: "uncompleted",
+  COMPLETED: "completed",
+  MOVED_FORWARD: "moved-forward",
+};
+
 const DATE_FORMAT = "YYYY-MM-DD";
 const generateKey = (date) => `32d|tasks|${date}`;
 
@@ -42,7 +48,7 @@ export const mutations = {
       ...getters.tasks(),
       {
         title: task,
-        complete: false,
+        status: STATUS.UNCOMPLETED,
         uuid: String(Math.random()).replace("0.", ""),
       },
     ];
@@ -83,6 +89,17 @@ export const mutations = {
     mutations.removeTask(task);
 
     persistDate(nextDay());
+  },
+
+  toggleComplete: (task) => {
+    console.log("toggleComplete", task);
+    mutations.updateTask({
+      ...task,
+      status:
+        task.status === STATUS.COMPLETED
+          ? STATUS.UNCOMPLETED
+          : STATUS.COMPLETED,
+    });
   },
 };
 
