@@ -89,6 +89,7 @@ export const mutations = {
       ...(state.tasks[nextDay()] || []),
       {
         ...task,
+        status: STATUS.UNCOMPLETED,
         uuid: String(Math.random()).replace("0.", ""),
       },
     ];

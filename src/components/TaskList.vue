@@ -15,6 +15,13 @@
       />
     </div>
 
+    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m mb-8">
+      <div
+        class="progress-bar bg-green-500 h-2.5 rounded-full"
+        :style="{ width: `${percentComplete}%` }"
+      ></div>
+    </div>
+
     <ul ref="taskList">
       <li v-for="(task, i) in getters.tasks()" :key="task.uuid">
         <task-item :task="task" :index="i" />
@@ -24,10 +31,10 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import Sortable from "sortablejs";
 
-import { state, mutations, getters, init } from "@/store/tasks";
+import { state, mutations, getters, init, STATUS } from "@/store/tasks";
 
 import TaskItem from "@/components/TaskItem";
 
@@ -59,6 +66,17 @@ export default {
       sortable = null;
     });
 
+    const percentComplete = computed(() => {
+      return Math.round(
+        (getters
+          .tasks()
+          .slice(0, 3)
+          .filter((task) => task.status === STATUS.COMPLETED).length /
+          3) *
+          100
+      );
+    });
+
     await init();
 
     const addTask = (task) => {
@@ -73,7 +91,14 @@ export default {
       addTask,
       input,
       taskList,
+      percentComplete,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+</style>
