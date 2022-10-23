@@ -54,8 +54,8 @@ export const mutations = {
     ];
   },
 
-  updateTask: (task) => {
-    state.tasks[state.currentDate] = getters
+  updateTask: (task, date = state.currentDate) => {
+    state.tasks[date] = getters
       .tasks()
       .map((t) => (t.uuid === task.uuid ? task : t));
   },
@@ -86,7 +86,11 @@ export const mutations = {
 
   moveToNextDay: (task) => {
     state.tasks[nextDay()] = [...(state.tasks[nextDay()] || []), task];
-    mutations.removeTask(task);
+
+    mutations.updateTask({
+      ...task,
+      status: STATUS.MOVED_FORWARD,
+    });
 
     persistDate(nextDay());
   },
