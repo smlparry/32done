@@ -9,7 +9,6 @@
         'border-green-500 shadow-none': task.status === STATUS.COMPLETED,
       },
     ]"
-    :style="{ 'animation-delay': `${index * 0.08}s` }"
   >
     <button @click="() => mutations.toggleComplete(task)" class="mr-2 mt-1">
       {{

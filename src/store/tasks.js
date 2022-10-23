@@ -13,8 +13,11 @@ export const STATUS = {
 const DATE_FORMAT = "YYYY-MM-DD";
 const generateKey = (date) => `32d|tasks|${date}`;
 
-const nextDay = () =>
-  dayjs(state.currentDate).add(1, "day").format(DATE_FORMAT);
+const nextDay = (date = state.currentDate) =>
+  dayjs(date).add(1, "day").format(DATE_FORMAT);
+
+const prevDay = (date = state.currentDate) =>
+  dayjs(date).subtract(1, "day").format(DATE_FORMAT);
 
 const persistDate = (date) => {
   localforage.setItem(
@@ -23,20 +26,37 @@ const persistDate = (date) => {
   );
 };
 
+const today = () => dayjs().format(DATE_FORMAT);
+
+export const percentComplete = (date) =>
+  Math.round(
+    ((state.tasks[date] || [])
+      .slice(0, 3)
+      .filter((task) =>
+        [STATUS.COMPLETED, STATUS.MOVED_FORWARD].includes(task.status)
+      ).length /
+      Math.min((state.tasks[date] || []).length, 3)) *
+      100
+  );
+
+const isDayComplete = (date) => percentComplete(date) === 100;
+
 export const state = reactive({
   tasks: {
     [dayjs().format(DATE_FORMAT)]: [],
   },
-  currentDate: dayjs().format(DATE_FORMAT),
+  currentDate: today(),
+  streak: 0,
 });
 
 export const getters = {
-  tasks: () => state.tasks[state.currentDate] || [],
+  tasks: (date = state.currentDate) => state.tasks[date] || [],
 };
 
 export const mutations = {
-  setTasks: (tasks) => {
-    state.tasks[state.currentDate] = tasks;
+  setTasks: (tasks, date = state.currentDate) => {
+    console.log("[setTasks]", date, tasks);
+    state.tasks[date] = tasks;
   },
 
   addTask: (task) => {
@@ -75,9 +95,7 @@ export const mutations = {
   },
 
   goToPrevDate: () => {
-    state.currentDate = dayjs(state.currentDate)
-      .subtract(1, "day")
-      .format(DATE_FORMAT);
+    state.currentDate = prevDay();
   },
 
   goToNextDate: () => {
@@ -114,29 +132,55 @@ export const mutations = {
   },
 };
 
-const loadTasks = async () => {
-  console.log("[Store] Loading Tasks");
-  if (getters.tasks().length) {
-    mutations.setTasks(getters.tasks());
-    return;
-  } else {
-    return localforage.getItem(generateKey(state.currentDate)).then((tasks) => {
-      if (tasks) mutations.setTasks(tasks);
-    });
-  }
+export const actions = {
+  loadTasks: async (date = state.currentDate) => {
+    console.log("[Store] Loading Tasks", date);
+    if (getters.tasks(date).length) {
+      mutations.setTasks(getters.tasks(date), date);
+      return;
+    } else {
+      return localforage.getItem(generateKey(date)).then((tasks) => {
+        if (tasks) mutations.setTasks(tasks, date);
+      });
+    }
+  },
+
+  calculateStreak: async (fromDate = today()) => {
+    console.log("Calculating Streak");
+    let streak = 0;
+    let date = fromDate;
+
+    while (isDayComplete(date)) {
+      streak++;
+      date = prevDay(date);
+      await actions.loadTasks(date);
+    }
+
+    console.log("streka", streak);
+    state.streak = streak;
+  },
 };
 
-export const init = loadTasks;
+export const init = async () => {
+  await actions.loadTasks();
 
-watch(() => state.currentDate, loadTasks);
+  actions.calculateStreak();
 
-watch(state.tasks, () => {
-  console.log(
-    "[Store] Persisting Updated State",
-    state.currentDate,
-    getters.tasks()
-  );
-  persistDate(state.currentDate);
-});
+  return;
+};
+
+watch(() => state.currentDate, actions.loadTasks);
+
+watch(
+  () => state.tasks[state.currentDate],
+  () => {
+    console.log(
+      "[Store] Persisting Updated State",
+      state.currentDate,
+      getters.tasks()
+    );
+    persistDate(state.currentDate);
+  }
+);
 
 window.getState = () => state;

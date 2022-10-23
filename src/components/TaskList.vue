@@ -3,8 +3,15 @@
     <div class="container mx-auto px-5">
       <div class="flex w-full justify-between py-6">
         <button @click="mutations.goToPrevDate">Prev</button>
-        <h3 class="text-2xl">Today</h3>
-        <button @click="mutations.goToNextDate">Next</button>
+        <div class="flex">
+          <h3 class="text-2xl">Today</h3>
+        </div>
+        <div class="flex">
+          <div v-if="state.streak" class="flex text-2xl font-bold ml-3">
+            {{ state.streak }}&nbsp;🔥
+          </div>
+          <button @click="mutations.goToNextDate">Next</button>
+        </div>
       </div>
       <div class="pb-8 pt-3">
         <input
@@ -16,11 +23,13 @@
         />
       </div>
 
-      <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m mb-6">
-        <div
-          class="progress-bar bg-green-500 h-2.5 rounded-full"
-          :style="{ width: `${percentComplete}%` }"
-        ></div>
+      <div class="flex items-center mb-6">
+        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m">
+          <div
+            class="progress-bar bg-green-500 h-2.5 rounded-full"
+            :style="{ width: `${completePercent}%` }"
+          ></div>
+        </div>
       </div>
 
       <ul ref="taskList">
@@ -36,7 +45,13 @@
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import Sortable from "sortablejs";
 
-import { state, mutations, getters, init, STATUS } from "@/store/tasks";
+import {
+  state,
+  mutations,
+  getters,
+  init,
+  percentComplete,
+} from "@/store/tasks";
 
 import TaskItem from "@/components/TaskItem";
 
@@ -68,16 +83,7 @@ export default {
       sortable = null;
     });
 
-    const percentComplete = computed(() => {
-      return Math.round(
-        (getters
-          .tasks()
-          .slice(0, 3)
-          .filter((task) => task.status === STATUS.COMPLETED).length /
-          3) *
-          100
-      );
-    });
+    const completePercent = computed(() => percentComplete(state.currentDate));
 
     await init();
 
@@ -93,7 +99,7 @@ export default {
       addTask,
       input,
       taskList,
-      percentComplete,
+      completePercent,
     };
   },
 };
