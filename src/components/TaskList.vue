@@ -16,8 +16,8 @@
     </div>
 
     <ul ref="taskList">
-      <li v-for="task in getters.tasks()" :key="task.uuid">
-        <task-item :task="task" />
+      <li v-for="(task, i) in getters.tasks()" :key="task.uuid">
+        <task-item :task="task" :index="i" />
       </li>
     </ul>
   </div>

@@ -1,6 +1,15 @@
 <template>
   <div
-    class="flex items-start shadow-md shadow-lg p-3 rounded-md border mb-3 bg-white cursor-grab"
+    :class="[
+      'flex items-start shadow-md shadow-lg rounded-md border-2 mb-3 bg-white cursor-grab',
+      { 'scale-110 mb-6 p-4': index <= 2 },
+      { 'p-2 opacity-20': index > 2 },
+      { 'mb-10': index === 2 },
+      {
+        'border-green-500 opacity-90 shadow-none':
+          task.status === STATUS.COMPLETED,
+      },
+    ]"
   >
     <button @click="() => mutations.toggleComplete(task)" class="mr-2 mt-1">
       {{
@@ -52,6 +61,7 @@ export default {
 
   props: {
     task: { type: Object, required: true },
+    index: { type: Number, required: true },
   },
 
   setup(props) {

@@ -85,7 +85,13 @@ export const mutations = {
   },
 
   moveToNextDay: (task) => {
-    state.tasks[nextDay()] = [...(state.tasks[nextDay()] || []), task];
+    state.tasks[nextDay()] = [
+      ...(state.tasks[nextDay()] || []),
+      {
+        ...task,
+        uuid: String(Math.random()).replace("0.", ""),
+      },
+    ];
 
     mutations.updateTask({
       ...task,
