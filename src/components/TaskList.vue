@@ -1,32 +1,34 @@
 <template>
-  <div class="container mx-auto px-5">
-    <div class="flex w-full justify-between py-6">
-      <button @click="mutations.goToPrevDate">Prev</button>
-      <h3 class="text-2xl">Today</h3>
-      <button @click="mutations.goToNextDate">Next</button>
-    </div>
-    <div class="pb-8 pt-3">
-      <input
-        ref="input"
-        type="text"
-        class="focus:outline-none text-2xl font-bold w-full"
-        placeholder="Type to create..."
-        @keyup.enter="($event) => addTask($event.target.value)"
-      />
-    </div>
+  <div class="">
+    <div class="container mx-auto px-5">
+      <div class="flex w-full justify-between py-6">
+        <button @click="mutations.goToPrevDate">Prev</button>
+        <h3 class="text-2xl">Today</h3>
+        <button @click="mutations.goToNextDate">Next</button>
+      </div>
+      <div class="pb-8 pt-3">
+        <input
+          ref="input"
+          type="text"
+          class="focus:outline-none text-2xl font-bold w-full"
+          placeholder="Type to create..."
+          @keyup.enter="($event) => addTask($event.target.value)"
+        />
+      </div>
 
-    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m mb-8">
-      <div
-        class="progress-bar bg-green-500 h-2.5 rounded-full"
-        :style="{ width: `${percentComplete}%` }"
-      ></div>
-    </div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m mb-6">
+        <div
+          class="progress-bar bg-green-500 h-2.5 rounded-full"
+          :style="{ width: `${percentComplete}%` }"
+        ></div>
+      </div>
 
-    <ul ref="taskList">
-      <li v-for="(task, i) in getters.tasks()" :key="task.uuid">
-        <task-item :task="task" :index="i" />
-      </li>
-    </ul>
+      <ul ref="taskList">
+        <li v-for="(task, i) in getters.tasks()" :key="task.uuid">
+          <task-item :task="task" :index="i" />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 

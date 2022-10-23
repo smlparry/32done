@@ -1,15 +1,15 @@
 <template>
   <div
     :class="[
-      'flex items-start shadow-md shadow-lg rounded-md border-2 mb-3 bg-white cursor-grab',
-      { 'scale-110 mb-6 p-4': index <= 2 },
-      { 'p-2 opacity-20': index > 2 },
+      'task-item flex items-start shadow-md shadow-lg rounded-md border-2 mb-3 bg-white cursor-grab transition-opacity transition-transform',
+      { 'p-2 hover:opacity-100': index > 2 },
       { 'mb-10': index === 2 },
+      { '--priority mb-6 p-4': index <= 2 },
       {
-        'border-green-500 opacity-90 shadow-none':
-          task.status === STATUS.COMPLETED,
+        'border-green-500 shadow-none': task.status === STATUS.COMPLETED,
       },
     ]"
+    :style="{ 'animation-delay': `${index * 0.08}s` }"
   >
     <button @click="() => mutations.toggleComplete(task)" class="mr-2 mt-1">
       {{
@@ -146,6 +146,39 @@ export default {
 </script>
 
 <style lang="scss">
+.task-item {
+  animation: fadeInUp 0.3s ease-in-out forwards;
+  opacity: 0;
+
+  &.--priority {
+    animation: fadeInUp--priority 0.3s ease-in-out forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes fadeInUp--priority {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(1);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(16px) scale(1.1);
+  }
+}
+
 .ProseMirror-focused {
   outline: none;
 }
