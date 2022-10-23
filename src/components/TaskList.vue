@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="pb-16">
     <div class="container mx-auto px-5">
       <div class="flex w-full justify-between py-6">
         <button @click="mutations.goToPrevDate">Prev</button>

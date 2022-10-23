@@ -129,6 +129,8 @@ export const mutations = {
           ? STATUS.UNCOMPLETED
           : STATUS.COMPLETED,
     });
+
+    actions.calculateStreak();
   },
 };
 
