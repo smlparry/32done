@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'task-item flex items-start shadow-md shadow-lg rounded-md border-2 mb-3 bg-white cursor-grab transition-opacity transition-transform',
+      'task-item flex items-start rounded-lg border-2 mb-3 bg-white cursor-grab transition-opacity transition-transform',
       { 'p-2 hover:opacity-100': index > 2 },
       { 'mb-10': index === 2 },
       { 'mb-6 p-4': index <= 2 },
