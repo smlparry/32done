@@ -46,6 +46,8 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Placeholder from "@tiptap/extension-placeholder";
 import History from "@tiptap/extension-history";
+import Code from "@tiptap/extension-code";
+import CodeBlock from "@tiptap/extension-code-block";
 
 const CustomDocument = Document.extend({
   content: "heading block*",
@@ -113,6 +115,8 @@ export default {
         }),
         TaskList,
         History,
+        Code,
+        CodeBlock,
         Heading.configure({
           levels: [2, 3, 6],
         }),
