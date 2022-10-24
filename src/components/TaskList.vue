@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <ul ref="taskList">
+      <ul class="fade-in-up" ref="taskList">
         <li v-for="(task, i) in getters.tasks()" :key="task.uuid">
           <task-item :task="task" :index="i" />
         </li>
@@ -108,5 +108,22 @@ export default {
 <style lang="scss" scoped>
 .progress-bar {
   transition: width 0.3s ease-in-out;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.3s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(16px);
+  }
 }
 </style>
