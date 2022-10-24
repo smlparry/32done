@@ -13,17 +13,7 @@
           <button @click="mutations.goToNextDate">Next</button>
         </div>
       </div>
-      <div class="pb-8 pt-3">
-        <input
-          ref="input"
-          type="text"
-          class="focus:outline-none text-2xl font-bold w-full"
-          placeholder="Type to create..."
-          @keyup.enter="($event) => addTask($event.target.value)"
-        />
-      </div>
-
-      <div class="flex items-center mb-6">
+      <div class="flex items-center mb-2">
         <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700m">
           <div
             class="progress-bar bg-green-500 h-2.5 rounded-full"
@@ -37,6 +27,16 @@
           <task-item :task="task" :index="i" />
         </li>
       </ul>
+
+      <div class="pt-6 pb-16">
+        <input
+          ref="input"
+          type="text"
+          class="focus:outline-none text-2xl font-bold w-full"
+          placeholder="Type to create..."
+          @keyup.enter="($event) => addTask($event.target.value)"
+        />
+      </div>
     </div>
   </div>
 </template>
